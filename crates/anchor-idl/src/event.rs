@@ -41,6 +41,9 @@ pub fn generate_events(
 
                     impl anchor_lang::Discriminator for #struct_name {
                         const DISCRIMINATOR: [u8; 8] = #discriminator;
+                        fn discriminator() -> [u8; 8] {
+                          self::DISCRIMINATOR
+                        }
                     }
 
                     impl anchor_lang::Event for #struct_name {

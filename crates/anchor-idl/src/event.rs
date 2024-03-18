@@ -21,11 +21,14 @@ pub fn generate_events(
 
                 let discriminator: proc_macro2::TokenStream = {
                     let discriminator_preimage = format!("event:{}", struct_name);
-                    let mut discriminator = [0u8; 8];
-                    let mut hash = Sha256::default();
+                    let mut hash = Sha256::new();
                     hash.update(discriminator_preimage.as_bytes());
-                    discriminator.copy_from_slice(&hash.finalize()[..8]);
-                    format!("{:?}", discriminator).parse().unwrap()
+                    let discriminator_bytes = &hash.finalize()[..8];
+                    let discriminator_vec = discriminator_bytes
+                        .iter()
+                        .map(|byte| quote!(#byte))
+                        .collect::<Vec<_>>();
+                    quote!([#(#discriminator_vec),*])
                 };
 
                 let fields = def

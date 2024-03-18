@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
 
+use anchor_syn::hash::hash;
 use anchor_syn::idl::{IdlEvent, IdlField, IdlTypeDefinition};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use sha2::{Digest, Sha256};
 
 use crate::{generate_struct, StructOpts};
 
@@ -21,7 +21,7 @@ pub fn generate_events(
 
                 let discriminator: proc_macro2::TokenStream = {
                     let discriminator_preimage = format!("event:{}", struct_name).into_bytes();
-                    let discriminator = anchor_syn::hash::hash(&discriminator_preimage);
+                    let discriminator = hash(&discriminator_preimage);
                     format!("{:?}", &discriminator.0[..8]).parse().unwrap()
                 };
 
